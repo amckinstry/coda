@@ -1778,6 +1778,7 @@ coda_hdf4_Vgroup *coda_hdf4_Vgroup_new(coda_hdf4_product *product, int32 vgroup_
 {
     coda_hdf4_Vgroup *type;
     int32 num_entries;
+    size_t buf_size;
 
     type = (coda_hdf4_Vgroup *)malloc(sizeof(coda_hdf4_Vgroup));
     if (type == NULL)
@@ -1810,14 +1811,16 @@ coda_hdf4_Vgroup *coda_hdf4_Vgroup_new(coda_hdf4_product *product, int32 vgroup_
         return NULL;
     }
 
-    if (Vinquire(type->vgroup_id, &num_entries, type->vgroup_name) != 0)
+    buf_size = MAX_HDF4_NAME_LENGTH+1;
+    if (Vinquire(type->vgroup_id, &num_entries, type->vgroup_name,&buf_size) != 0)
     {
         coda_set_error(CODA_ERROR_HDF4, NULL);
         coda_hdf4_type_delete((coda_dynamic_type *)type);
         return NULL;
     }
 
-    if (Vgetclass(type->vgroup_id, type->classname) != 0)
+    buf_size= MAX_HDF4_NAME_LENGTH+1;
+    if (Vgetclass(type->vgroup_id, type->classname,&buf_size) != 0)
     {
         coda_set_error(CODA_ERROR_HDF4, NULL);
         coda_hdf4_type_delete((coda_dynamic_type *)type);
